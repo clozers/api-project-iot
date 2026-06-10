@@ -174,7 +174,7 @@ class DashboardController extends Controller
 
         $now = Carbon::now();
         $lastSeen = Carbon::parse($latestLog->created_at);
-        $diffSeconds = $now->diffInSeconds($lastSeen);
+        $diffSeconds = $now->diffInSeconds($lastSeen, true);
         
         $isOnline = $diffSeconds <= 15; // Online if logged within 15 seconds
 
