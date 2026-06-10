@@ -55,6 +55,11 @@ class SensorController extends Controller
         $systemState = $this->calculateSystemState($latestLog);
         $deviceState = $this->calculateDeviceState($latestLog);
 
+        $now = Carbon::now();
+        $lastSeen = $latestLog ? Carbon::parse($latestLog->created_at) : null;
+        // Use false as the second argument to get a signed difference
+        $diffSeconds = $lastSeen ? $now->diffInSeconds($lastSeen, false) : null;
+
         return response()->json([
             'latest_reading' => $latestLog ? [
                 'id' => $latestLog->id,
@@ -66,6 +71,12 @@ class SensorController extends Controller
             'status_color' => $systemState['color'],
             'device_status' => $deviceState['status'],
             'device_uptime' => $deviceState['uptime'],
+            
+            // Temporary debug fields
+            'server_time' => $now->toDateTimeString() . ' (' . $now->timezoneName . ')',
+            'last_seen' => $lastSeen ? $lastSeen->toDateTimeString() . ' (' . $lastSeen->timezoneName . ')' : null,
+            'diff_seconds' => $diffSeconds,
+            'is_online' => $deviceState['online']
         ]);
     }
 
