@@ -41,6 +41,11 @@ class SensorController extends Controller
         // Store data using the repository
         $this->sensorRepository->create($validator->validated());
 
+        // Set session start time if device is newly online / cache has expired
+        if (!Cache::has('session_start')) {
+            Cache::put('session_start', Carbon::now()->toDateTimeString());
+        }
+
         return response()->json([
             'success' => true,
         ]);
