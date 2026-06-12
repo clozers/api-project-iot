@@ -176,7 +176,7 @@ class DashboardController extends Controller
         $lastSeen = Carbon::parse($latestLog->created_at);
         $diffSeconds = $now->diffInSeconds($lastSeen, true);
         
-        $isOnline = $diffSeconds <= 15; // Online if logged within 15 seconds
+        $isOnline = $diffSeconds <= 90; // Online if logged within 90 seconds (accommodating 60s safe-state upload interval)
 
         if ($isOnline) {
             // Retrieve session start from cache
