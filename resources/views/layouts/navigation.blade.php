@@ -16,16 +16,31 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-slate-300 active:text-emerald-400 hover:text-white border-emerald-500">
-                        {{ __('Dashboard') }}
+                        {{ __('ui.dashboard') }}
                     </x-nav-link>
                     <x-nav-link :href="route('logs.index')" :active="request()->routeIs('logs.index')" class="text-slate-300 active:text-emerald-400 hover:text-white border-emerald-500">
-                        {{ __('Sensor Logs') }}
+                        {{ __('ui.sensor_logs') }}
                     </x-nav-link>
                 </div>
             </div>
 
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex sm:items-center sm:ms-6 gap-3">
+
+                <!-- Language Switcher -->
+                <div class="flex items-center rounded-lg overflow-hidden border border-slate-700 text-xs font-bold">
+                    <a href="{{ route('lang.switch', 'id') }}"
+                       class="px-2.5 py-1.5 transition {{ app()->getLocale() === 'id' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white' }}"
+                       title="Bahasa Indonesia">
+                        🇮🇩 ID
+                    </a>
+                    <a href="{{ route('lang.switch', 'en') }}"
+                       class="px-2.5 py-1.5 transition {{ app()->getLocale() === 'en' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white' }}"
+                       title="English">
+                        🇬🇧 EN
+                    </a>
+                </div>
+
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-slate-400 bg-slate-900 hover:text-slate-200 focus:outline-none transition ease-in-out duration-150">
@@ -41,7 +56,7 @@
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')" class="text-slate-300 hover:bg-slate-800 hover:text-white">
-                            {{ __('Profile') }}
+                            {{ __('ui.profile') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -52,7 +67,7 @@
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();"
                                     class="text-slate-300 hover:bg-slate-800 hover:text-white">
-                                {{ __('Log Out') }}
+                                {{ __('ui.log_out') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
@@ -75,10 +90,10 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-slate-900 border-t border-slate-850">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-slate-300 hover:text-white hover:bg-slate-800">
-                {{ __('Dashboard') }}
+                {{ __('ui.dashboard') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('logs.index')" :active="request()->routeIs('logs.index')" class="text-slate-300 hover:text-white hover:bg-slate-800">
-                {{ __('Sensor Logs') }}
+                {{ __('ui.sensor_logs') }}
             </x-responsive-nav-link>
         </div>
 
@@ -89,9 +104,21 @@
                 <div class="font-medium text-sm text-slate-500">{{ Auth::user()->email }}</div>
             </div>
 
+            <!-- Mobile Language Switcher -->
+            <div class="px-4 mt-3 flex gap-2">
+                <a href="{{ route('lang.switch', 'id') }}"
+                   class="flex-1 text-center py-1.5 text-xs font-bold rounded-lg transition {{ app()->getLocale() === 'id' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400 border border-slate-700' }}">
+                    🇮🇩 Indonesia
+                </a>
+                <a href="{{ route('lang.switch', 'en') }}"
+                   class="flex-1 text-center py-1.5 text-xs font-bold rounded-lg transition {{ app()->getLocale() === 'en' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400 border border-slate-700' }}">
+                    🇬🇧 English
+                </a>
+            </div>
+
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')" class="text-slate-400 hover:text-white hover:bg-slate-800">
-                    {{ __('Profile') }}
+                    {{ __('ui.profile') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
@@ -102,7 +129,7 @@
                             onclick="event.preventDefault();
                                         this.closest('form').submit();"
                             class="text-slate-400 hover:text-white hover:bg-slate-800">
-                        {{ __('Log Out') }}
+                        {{ __('ui.log_out') }}
                     </x-responsive-nav-link>
                 </form>
             </div>

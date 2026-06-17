@@ -130,10 +130,10 @@ class SensorLogController extends Controller
                 elseif ($gasValue <= 1500)  $gasLevel = 'High';
                 else                         $gasLevel = 'CRITICAL - Exceeds Threshold';
 
-                // Derive system status
-                if ($flameDetected)          $status = 'FIRE DETECTED';
-                elseif ($gasValue > 1500)    $status = 'GAS LEAK';
-                else                         $status = 'SAFE';
+                // Derive system status (use $rowStatus to avoid overwriting outer $status filter variable)
+                if ($flameDetected)          $rowStatus = 'FIRE DETECTED';
+                elseif ($gasValue > 1500)    $rowStatus = 'GAS LEAK';
+                else                         $rowStatus = 'SAFE';
 
                 fputcsv($file, [
                     $rowNumber++,
@@ -141,7 +141,7 @@ class SensorLogController extends Controller
                     $gasValue,
                     $gasLevel,
                     $flameDetected ? 'FIRE DETECTED' : 'Normal',
-                    $status,
+                    $rowStatus,
                     $timestamp->format('Y-m-d'),
                     $timestamp->format('H:i:s'),
                     $timestamp->format('l'),       // e.g. Monday

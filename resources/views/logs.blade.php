@@ -3,9 +3,9 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
             <div>
                 <h2 class="font-semibold text-xl text-slate-100 leading-tight">
-                    {{ __('Sensor Communication Logs') }}
+                    {{ __('ui.sensor_comm_logs') }}
                 </h2>
-                <p class="text-xs text-slate-400 mt-1">Search, sort, analyze, and export historical MQ-2 and KY-026 readings</p>
+                <p class="text-xs text-slate-400 mt-1">{{ __('ui.logs_subtitle') }}</p>
             </div>
             <div>
                 <button
@@ -16,7 +16,7 @@
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
-                    <span>Export CSV</span>
+                    <span>{{ __('ui.export_csv') }}</span>
                     <svg class="h-3 w-3 ml-1 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                     </svg>
@@ -56,7 +56,7 @@
 
                         {{-- Date From --}}
                         <div>
-                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">Tanggal Mulai</label>
+                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">{{ __('ui.date_from') }}</label>
                             <input type="date" name="date_from" id="date_from"
                                 class="w-full rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 focus:border-emerald-500 focus:ring-0 focus:outline-none transition"
                                 max="{{ date('Y-m-d') }}"
@@ -65,7 +65,7 @@
 
                         {{-- Date To --}}
                         <div>
-                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">Tanggal Selesai</label>
+                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">{{ __('ui.date_to') }}</label>
                             <input type="date" name="date_to" id="date_to"
                                 class="w-full rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 focus:border-emerald-500 focus:ring-0 focus:outline-none transition"
                                 max="{{ date('Y-m-d') }}"
@@ -74,20 +74,20 @@
 
                         {{-- Status Filter --}}
                         <div>
-                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">Status Sistem</label>
+                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">{{ __('ui.system_status') }}</label>
                             <select name="status" id="status_filter"
                                 class="w-full rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 focus:border-emerald-500 focus:ring-0 focus:outline-none transition"
                             >
-                                <option value="">Semua Status</option>
-                                <option value="safe">✅ Safe (Aman)</option>
-                                <option value="gas_leak">⚠️ Gas Leak (Kebocoran Gas)</option>
-                                <option value="fire">🔥 Fire Detected (Api Terdeteksi)</option>
+                                <option value="">{{ __('ui.all_status') }}</option>
+                                <option value="safe">{{ __('ui.safe_status') }}</option>
+                                <option value="gas_leak">{{ __('ui.gas_leak_status') }}</option>
+                                <option value="fire">{{ __('ui.fire_status') }}</option>
                             </select>
                         </div>
 
                         {{-- Gas Min --}}
                         <div>
-                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">Gas Minimum (ppm)</label>
+                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">{{ __('ui.gas_min') }}</label>
                             <input type="number" name="gas_min" id="gas_min" min="0" max="9999" placeholder="Contoh: 0"
                                 class="w-full rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 focus:border-emerald-500 focus:ring-0 focus:outline-none transition"
                             >
@@ -95,7 +95,7 @@
 
                         {{-- Gas Max --}}
                         <div>
-                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">Gas Maksimum (ppm)</label>
+                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">{{ __('ui.gas_max') }}</label>
                             <input type="number" name="gas_max" id="gas_max" min="0" max="9999" placeholder="Contoh: 9999"
                                 class="w-full rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 focus:border-emerald-500 focus:ring-0 focus:outline-none transition"
                             >
@@ -109,7 +109,7 @@
                                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                 </svg>
-                                Download CSV
+                                {{ __('ui.download_csv') }}
                             </button>
                         </div>
 
@@ -137,12 +137,12 @@
 
                     <div class="flex space-x-3">
                         <button type="submit" class="inline-flex items-center justify-center px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold rounded-lg border border-slate-700 transition w-full md:w-auto">
-                            Apply Filter
+                            {{ __('ui.apply_filter') }}
                         </button>
                         
                         @if($search)
                             <a href="{{ route('logs.index', ['sort_by' => $sortBy, 'order' => $order]) }}" class="inline-flex items-center justify-center px-4 py-2 bg-slate-900/50 hover:bg-slate-800/80 text-slate-400 text-sm font-semibold rounded-lg border border-slate-800 transition w-full md:w-auto">
-                                Clear
+                                {{ __('ui.clear') }}
                             </a>
                         @endif
                     </div>
@@ -210,20 +210,20 @@
                                             <span class="font-bold text-slate-100">{{ $log->gas_value }}</span>
                                             <span class="text-xs text-slate-500">ppm</span>
                                             @if($log->gas_value > 1500)
-                                                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950/60 text-amber-400 border border-amber-800/30">THRESHOLD EXCEEDED</span>
+                                                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950/60 text-amber-400 border border-amber-800/30">{{ __('ui.threshold_exceeded') }}</span>
                                             @endif
                                         </div>
                                     </td>
                                     <td class="py-3.5 px-6">
                                         <span class="px-2 py-0.5 rounded text-xs font-semibold {{ $log->flame_detected ? 'bg-red-950/45 text-red-400 border border-red-500/20' : 'bg-emerald-950/45 text-emerald-400 border border-emerald-500/20' }}">
-                                            {{ $log->flame_detected ? 'FIRE DETECTED' : 'SAFE' }}
+                                            {{ $log->flame_detected ? __('ui.fire_detected') : __('ui.safe') }}
                                         </span>
                                     </td>
                                     <td class="py-3.5 px-6 text-slate-400 text-xs">{{ $log->created_at->format('Y-m-d H:i:s') }} <span class="text-slate-600 text-[10px] ml-1">({{ $log->created_at->diffForHumans() }})</span></td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="py-12 text-center text-slate-500">No sensor log events match the query criteria in MySQL database.</td>
+                                    <td colspan="4" class="py-12 text-center text-slate-500">{{ __('ui.no_logs_found') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

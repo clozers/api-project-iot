@@ -10,6 +10,8 @@ use Illuminate\Http\JsonResponse;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SensorController extends Controller
 {
@@ -195,8 +197,8 @@ class SensorController extends Controller
      */
     private function checkAndSendTelegramAlert(int $gas, bool $flame): void
     {
-        $botToken = env('TELEGRAM_BOT_TOKEN');
-        $chatId = env('TELEGRAM_CHAT_ID');
+        $botToken = config('services.telegram.bot_token');
+        $chatId   = config('services.telegram.chat_id');
 
         if (!$botToken || !$chatId) {
             return;
@@ -238,9 +240,9 @@ class SensorController extends Controller
             }
 
             try {
-                \Illuminate\Support\Facades\Http::timeout(5)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
-                    'chat_id' => $chatId,
-                    'text' => $message,
+                Http::timeout(5)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                    'chat_id'    => $chatId,
+                    'text'       => $message,
                     'parse_mode' => 'Markdown',
                 ]);
 
@@ -248,7 +250,7 @@ class SensorController extends Controller
                 Cache::put('tg_last_alert_state', $currentState);
                 Cache::put('tg_last_alert_time', Carbon::now()->toDateTimeString());
             } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error("Failed to send Telegram notification: " . $e->getMessage());
+                Log::error("Failed to send Telegram notification: " . $e->getMessage());
             }
         }
     }

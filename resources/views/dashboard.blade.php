@@ -3,12 +3,12 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
             <div>
                 <h2 class="font-semibold text-xl text-slate-100 leading-tight">
-                    {{ __('Industrial IoT Monitoring Dashboard') }}
+                    {{ __('ui.dashboard_title') }}
                 </h2>
-                <p class="text-xs text-slate-400 mt-1">Smart Safety System — ESP32 Sensor Nodes</p>
+                <p class="text-xs text-slate-400 mt-1">{{ __('ui.smart_safety_system') }}</p>
             </div>
             <div class="flex items-center space-x-3">
-                <span class="text-xs text-slate-400">Communication Mode:</span>
+                <span class="text-xs text-slate-400">{{ __('ui.comm_mode') }}</span>
                 <span id="device-pill" class="px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 {{ $deviceInfo['online'] ? 'bg-emerald-950/50 text-emerald-400 border border-emerald-800' : 'bg-rose-950/50 text-rose-400 border border-rose-800' }}">
                     <span id="device-dot" class="h-2 w-2 rounded-full {{ $deviceInfo['online'] ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400' }}"></span>
                     <span id="device-status-text">{{ $deviceInfo['status'] }}</span>
@@ -59,12 +59,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                         <div>
-                            <span class="text-sm tracking-wider uppercase bg-red-950 px-2 py-0.5 rounded mr-2">CRITICAL</span>
-                            <span class="text-lg">FIRE DETECTED - KY-026 Flame Sensor triggered! Active Buzzer enabled on-site.</span>
+                            <span class="text-sm tracking-wider uppercase bg-red-950 px-2 py-0.5 rounded mr-2">{{ __('ui.alert_fire_critical') }}</span>
+                            <span class="text-lg">{{ __('ui.alert_fire_text') }}</span>
                         </div>
                     </div>
                     <div class="hidden md:block">
-                        <span class="text-xs uppercase bg-red-800 py-1 px-3 rounded-full border border-red-400">Evacuate Area</span>
+                        <span class="text-xs uppercase bg-red-800 py-1 px-3 rounded-full border border-red-400">{{ __('ui.alert_fire_action') }}</span>
                     </div>
                 </div>
 
@@ -75,12 +75,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         <div>
-                            <span class="text-sm tracking-wider uppercase bg-amber-950 px-2 py-0.5 rounded mr-2">WARNING</span>
-                            <span class="text-lg">GAS LEAK DETECTED - MQ-2 Gas Value exceeds threshold (>1500 ppm)! Vent room immediately.</span>
+                            <span class="text-sm tracking-wider uppercase bg-amber-950 px-2 py-0.5 rounded mr-2">{{ __('ui.alert_gas_warning') }}</span>
+                            <span class="text-lg">{{ __('ui.alert_gas_text') }}</span>
                         </div>
                     </div>
                     <div class="hidden md:block">
-                        <span class="text-xs uppercase bg-amber-800 py-1 px-3 rounded-full border border-amber-400">Ventilate</span>
+                        <span class="text-xs uppercase bg-amber-800 py-1 px-3 rounded-full border border-amber-400">{{ __('ui.alert_gas_action') }}</span>
                     </div>
                 </div>
             </div>
@@ -90,15 +90,15 @@
                 <!-- System Status Panel -->
                 <div id="status-panel" class="glass-card rounded-xl p-6 flex flex-col justify-between border-t-4 {{ $systemState['class'] }}">
                     <div>
-                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Current System Status</div>
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('ui.current_system_status') }}</div>
                         <div id="system-status-title" class="text-3xl font-extrabold mt-2 tracking-wide">{{ $systemState['status'] }}</div>
                     </div>
                     <p id="system-status-desc" class="text-sm mt-4 leading-relaxed opacity-90">
                         {{ $systemState['message'] }}
                     </p>
                     <div class="mt-6 pt-4 border-t border-slate-800/40 flex items-center justify-between text-xs text-slate-400">
-                        <span>Check interval: 5 seconds</span>
-                        <span class="flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Node Active</span>
+                        <span>{{ __('ui.check_interval') }}</span>
+                        <span class="flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> {{ __('ui.node_active') }}</span>
                     </div>
                 </div>
 
@@ -106,7 +106,7 @@
                 <div class="glass-card rounded-xl p-6 flex flex-col justify-between text-slate-100">
                     <div>
                         <div class="flex justify-between items-center">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">MQ-2 Gas Sensor</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('ui.mq2_sensor') }}</span>
                             <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold border border-slate-700 bg-slate-800 text-slate-400">PPM</span>
                         </div>
                         <div class="flex items-baseline mt-4">
@@ -116,7 +116,7 @@
                     </div>
                     <div class="mt-6 space-y-2">
                         <div class="flex justify-between text-xs text-slate-400">
-                            <span>Safety Threshold: 1500 ppm</span>
+                            <span>{{ __('ui.safety_threshold') }}</span>
                             <span id="gas-level-pct">Avg: {{ $dailyStats['avg_gas'] }} ppm</span>
                         </div>
                         <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700/50">
@@ -129,8 +129,8 @@
                 <div class="glass-card rounded-xl p-6 flex flex-col justify-between text-slate-100">
                     <div>
                         <div class="flex justify-between items-center">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">KY-026 Flame Sensor</span>
-                            <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold border border-slate-700 bg-slate-800 text-slate-400">IR Diode</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ __('ui.ky026_sensor') }}</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold border border-slate-700 bg-slate-800 text-slate-400">{{ __('ui.ir_diode') }}</span>
                         </div>
                         <div class="flex items-center space-x-4 mt-4">
                             <div id="flame-icon-bg" class="p-3 rounded-lg flex items-center justify-center {{ ($latestLog && $latestLog->flame_detected) ? 'bg-red-950/40 text-red-500 border border-red-500/30 siren-glow' : 'bg-slate-800/40 text-slate-500 border border-slate-700/30' }}">
@@ -140,14 +140,14 @@
                             </div>
                             <div>
                                 <div id="live-flame-text" class="text-2xl font-bold {{ ($latestLog && $latestLog->flame_detected) ? 'text-red-400' : 'text-slate-300' }}">
-                                    {{ ($latestLog && $latestLog->flame_detected) ? 'FLAME DETECTED' : 'NO FLAME' }}
+                                    {{ ($latestLog && $latestLog->flame_detected) ? __('ui.flame_detected_text') : __('ui.no_flame') }}
                                 </div>
-                                <div class="text-xs text-slate-400 mt-1">Status: Active Monitoring</div>
+                                <div class="text-xs text-slate-400 mt-1">{{ __('ui.status_active_mon') }}</div>
                             </div>
                         </div>
                     </div>
                     <div class="mt-6 pt-4 border-t border-slate-800/60 flex justify-between text-xs text-slate-400">
-                        <span>Hardware: Active Buzzer link</span>
+                        <span>{{ __('ui.hardware_buzzer') }}</span>
                         <span id="flame-status-indicator" class="font-semibold {{ ($latestLog && $latestLog->flame_detected) ? 'text-red-400' : 'text-emerald-400' }}">{{ ($latestLog && $latestLog->flame_detected) ? '🚨 CRITICAL' : '✓ OK' }}</span>
                     </div>
                 </div>
@@ -164,14 +164,14 @@
                             </svg>
                         </div>
                         <div>
-                            <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Device Connection Status</div>
+                            <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">{{ __('ui.device_conn_status') }}</div>
                             <div id="device-info-comm" class="text-lg font-bold mt-1 text-slate-200">
                                 ESP32 Node: <span id="device-text-status" class="{{ $deviceInfo['online'] ? 'text-emerald-400' : 'text-rose-400' }}">{{ $deviceInfo['status'] }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-[10px] text-slate-400 uppercase font-semibold">Last Transmission</div>
+                        <div class="text-[10px] text-slate-400 uppercase font-semibold">{{ __('ui.last_transmission') }}</div>
                         <div id="device-last-seen" class="text-sm font-semibold mt-1 text-slate-300">{{ $deviceInfo['last_seen'] }}</div>
                     </div>
                 </div>
@@ -185,14 +185,14 @@
                             </svg>
                         </div>
                         <div>
-                            <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Active System Uptime</div>
+                            <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">{{ __('ui.active_uptime') }}</div>
                             <div id="device-uptime" class="text-lg font-bold mt-1 text-indigo-300">
                                 {{ $deviceInfo['uptime'] }}
                             </div>
                         </div>
                     </div>
                     <div class="text-right text-xs text-slate-400 leading-snug">
-                        Calculated by active<br>polling sequence
+                        {{ __('ui.polling_sequence') }}
                     </div>
                 </div>
             </div>
@@ -201,42 +201,42 @@
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Total Records -->
                 <div class="glass-card rounded-xl p-5 text-slate-100">
-                    <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Records</div>
+                    <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">{{ __('ui.total_records') }}</div>
                     <div id="stat-total-records" class="text-3xl font-extrabold mt-2 text-slate-100">{{ $totalCount }}</div>
                     <div class="text-xs text-slate-400 mt-2 flex justify-between">
-                        <span>Database Size</span>
-                        <span>Log Size</span>
+                        <span>{{ __('ui.database_size') }}</span>
+                        <span>{{ __('ui.log_size') }}</span>
                     </div>
                 </div>
 
                 <!-- Latest Gas Value -->
                 <div class="glass-card rounded-xl p-5 text-slate-100">
-                    <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Latest Gas Level</div>
+                    <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">{{ __('ui.latest_gas_level') }}</div>
                     <div id="stat-latest-gas" class="text-3xl font-extrabold mt-2 text-slate-100">{{ $latestLog ? $latestLog->gas_value : '--' }} <span class="text-sm text-slate-400 font-normal">ppm</span></div>
                     <div class="text-xs mt-2 flex justify-between items-center">
-                        <span class="text-slate-400">Current Value</span>
+                        <span class="text-slate-400">{{ __('ui.current_value') }}</span>
                         <span id="stat-latest-gas-status" class="px-1.5 py-0.5 rounded text-[10px] font-bold {{ ($latestLog && $latestLog->gas_value > 1500) ? 'bg-amber-950 text-amber-400' : 'bg-emerald-950 text-emerald-400' }}">
-                            {{ ($latestLog && $latestLog->gas_value > 1500) ? 'ELEVATED' : 'SAFE' }}
+                            {{ ($latestLog && $latestLog->gas_value > 1500) ? __('ui.elevated') : __('ui.safe') }}
                         </span>
                     </div>
                 </div>
 
                 <!-- Flame Detection Count -->
                 <div class="glass-card rounded-xl p-5 text-slate-100">
-                    <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Fire Alerts Logged</div>
+                    <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">{{ __('ui.fire_alerts_logged') }}</div>
                     <div id="stat-flame-count" class="text-3xl font-extrabold mt-2 text-rose-500">{{ $flameCount }}</div>
                     <div class="text-xs text-slate-400 mt-2 flex justify-between">
-                        <span>KY-026 Detections</span>
-                        <span>Total Fire Count</span>
+                        <span>{{ __('ui.ky026_detections') }}</span>
+                        <span>{{ __('ui.total_fire_count') }}</span>
                     </div>
                 </div>
 
                 <!-- Last Communication Sync -->
                 <div class="glass-card rounded-xl p-5 text-slate-100">
-                    <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Last Sync Time</div>
+                    <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">{{ __('ui.last_sync_time') }}</div>
                     <div id="stat-last-sync" class="text-lg font-bold mt-3.5 text-slate-200">{{ $latestLog ? \Carbon\Carbon::parse($latestLog->created_at)->format('H:i:s') : 'Never' }}</div>
                     <div class="text-xs text-slate-400 mt-3 flex justify-between">
-                        <span>HH:MM:SS format</span>
+                        <span>{{ __('ui.hhmmss_format') }}</span>
                         <span>MySQL DB</span>
                     </div>
                 </div>
@@ -247,20 +247,20 @@
                 <!-- Daily Stats -->
                 <div class="glass-card rounded-xl p-5 text-slate-100">
                     <h3 class="text-sm font-bold text-slate-300 uppercase border-b border-slate-800 pb-3 flex justify-between items-center">
-                        <span>Daily Statistics (Today)</span>
-                        <span class="px-2 py-0.5 bg-slate-800 text-[10px] text-slate-400 rounded">24 Hours</span>
+                        <span>{{ __('ui.daily_stats') }}</span>
+                        <span class="px-2 py-0.5 bg-slate-800 text-[10px] text-slate-400 rounded">{{ __('ui.24_hours') }}</span>
                     </h3>
                     <div class="grid grid-cols-3 gap-4 mt-4">
                         <div>
-                            <div class="text-xs text-slate-400">Average Gas</div>
+                            <div class="text-xs text-slate-400">{{ __('ui.average_gas') }}</div>
                             <div id="daily-avg-gas" class="text-xl font-bold mt-1 text-slate-100">{{ $dailyStats['avg_gas'] }} <span class="text-xs font-normal text-slate-400">ppm</span></div>
                         </div>
                         <div>
-                            <div class="text-xs text-slate-400">Peak Gas</div>
+                            <div class="text-xs text-slate-400">{{ __('ui.peak_gas') }}</div>
                             <div id="daily-max-gas" class="text-xl font-bold mt-1 text-slate-100">{{ $dailyStats['max_gas'] }} <span class="text-xs font-normal text-slate-400">ppm</span></div>
                         </div>
                         <div>
-                            <div class="text-xs text-slate-400">Fire Events</div>
+                            <div class="text-xs text-slate-400">{{ __('ui.fire_events') }}</div>
                             <div id="daily-flame-count" class="text-xl font-bold mt-1 text-rose-500">{{ $dailyStats['flame_count'] }}</div>
                         </div>
                     </div>
@@ -269,20 +269,20 @@
                 <!-- Weekly Stats -->
                 <div class="glass-card rounded-xl p-5 text-slate-100">
                     <h3 class="text-sm font-bold text-slate-300 uppercase border-b border-slate-800 pb-3 flex justify-between items-center">
-                        <span>Weekly Statistics (7 Days)</span>
-                        <span class="px-2 py-0.5 bg-slate-800 text-[10px] text-slate-400 rounded">1 Week</span>
+                        <span>{{ __('ui.weekly_stats') }}</span>
+                        <span class="px-2 py-0.5 bg-slate-800 text-[10px] text-slate-400 rounded">{{ __('ui.1_week') }}</span>
                     </h3>
                     <div class="grid grid-cols-3 gap-4 mt-4">
                         <div>
-                            <div class="text-xs text-slate-400">Average Gas</div>
+                            <div class="text-xs text-slate-400">{{ __('ui.average_gas') }}</div>
                             <div id="weekly-avg-gas" class="text-xl font-bold mt-1 text-slate-100">{{ $weeklyStats['avg_gas'] }} <span class="text-xs font-normal text-slate-400">ppm</span></div>
                         </div>
                         <div>
-                            <div class="text-xs text-slate-400">Peak Gas</div>
+                            <div class="text-xs text-slate-400">{{ __('ui.peak_gas') }}</div>
                             <div id="weekly-max-gas" class="text-xl font-bold mt-1 text-slate-100">{{ $weeklyStats['max_gas'] }} <span class="text-xs font-normal text-slate-400">ppm</span></div>
                         </div>
                         <div>
-                            <div class="text-xs text-slate-400">Fire Events</div>
+                            <div class="text-xs text-slate-400">{{ __('ui.fire_events') }}</div>
                             <div id="weekly-flame-count" class="text-xl font-bold mt-1 text-rose-500">{{ $weeklyStats['flame_count'] }}</div>
                         </div>
                     </div>
@@ -295,10 +295,10 @@
                 <div class="glass-card rounded-xl p-6">
                     <div class="flex justify-between items-center mb-4 border-b border-slate-800/80 pb-3">
                         <div>
-                            <h3 class="text-base font-bold text-slate-200">Gas Level History</h3>
-                            <p class="text-xs text-slate-400 mt-0.5">Real-time tracker of the last 20 readings</p>
+                            <h3 class="text-base font-bold text-slate-200">{{ __('ui.gas_level_history') }}</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">{{ __('ui.realtime_last20') }}</p>
                         </div>
-                        <span class="px-2 py-0.5 bg-emerald-950 text-emerald-400 text-[10px] uppercase font-bold border border-emerald-800 rounded">Live Feed</span>
+                        <span class="px-2 py-0.5 bg-emerald-950 text-emerald-400 text-[10px] uppercase font-bold border border-emerald-800 rounded">{{ __('ui.live_feed') }}</span>
                     </div>
                     <div class="h-80 relative">
                         <canvas id="lineChart"></canvas>
@@ -309,10 +309,10 @@
                 <div class="glass-card rounded-xl p-6">
                     <div class="flex justify-between items-center mb-4 border-b border-slate-800/80 pb-3">
                         <div>
-                            <h3 class="text-base font-bold text-slate-200">Daily Gas Average</h3>
-                            <p class="text-xs text-slate-400 mt-0.5">Average pollution values for the last 7 days</p>
+                            <h3 class="text-base font-bold text-slate-200">{{ __('ui.daily_gas_average') }}</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">{{ __('ui.avg_last7days') }}</p>
                         </div>
-                        <span class="px-2 py-0.5 bg-slate-800 text-slate-300 text-[10px] uppercase font-bold border border-slate-700 rounded">Daily Avg</span>
+                        <span class="px-2 py-0.5 bg-slate-800 text-slate-300 text-[10px] uppercase font-bold border border-slate-700 rounded">{{ __('ui.daily_avg') }}</span>
                     </div>
                     <div class="h-80 relative">
                         <canvas id="barChart"></canvas>
@@ -324,11 +324,11 @@
             <div class="glass-card rounded-xl p-6">
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800/80">
                     <div>
-                        <h3 class="text-base font-bold text-slate-200">Recent Sensor Logs</h3>
-                        <p class="text-xs text-slate-400 mt-0.5">Latest 10 communication events processed</p>
+                        <h3 class="text-base font-bold text-slate-200">{{ __('ui.recent_sensor_logs') }}</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">{{ __('ui.latest10_events') }}</p>
                     </div>
                     <a href="{{ route('logs.index') }}" class="text-xs text-emerald-400 hover:text-emerald-300 hover:underline flex items-center space-x-1">
-                        <span>Open Complete logs table</span>
+                        <span>{{ __('ui.open_full_logs') }}</span>
                         <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
@@ -339,10 +339,10 @@
                         <thead class="bg-slate-900/80 text-slate-400 uppercase text-xs border-b border-slate-850">
                             <tr>
                                 <th class="py-3 px-4 font-semibold">ID</th>
-                                <th class="py-3 px-4 font-semibold">Gas Value</th>
-                                <th class="py-3 px-4 font-semibold">Flame Status</th>
-                                <th class="py-3 px-4 font-semibold">Timestamp</th>
-                                <th class="py-3 px-4 font-semibold">Latency</th>
+                                <th class="py-3 px-4 font-semibold">{{ __('ui.gas_value') }}</th>
+                                <th class="py-3 px-4 font-semibold">{{ __('ui.flame_status') }}</th>
+                                <th class="py-3 px-4 font-semibold">{{ __('ui.timestamp') }}</th>
+                                <th class="py-3 px-4 font-semibold">{{ __('ui.latency') }}</th>
                             </tr>
                         </thead>
                         <tbody id="recent-logs-table" class="divide-y divide-slate-800/40">
@@ -357,7 +357,7 @@
                                     </td>
                                     <td class="py-3.5 px-4">
                                         <span class="px-2 py-0.5 rounded text-xs font-semibold {{ $log->flame_detected ? 'bg-red-950/40 text-red-400 border border-red-500/20' : 'bg-emerald-950/40 text-emerald-400 border border-emerald-500/20' }}">
-                                            {{ $log->flame_detected ? 'FIRE DETECTED' : 'SAFE' }}
+                                            {{ $log->flame_detected ? __('ui.fire_detected') : __('ui.safe') }}
                                         </span>
                                     </td>
                                     <td class="py-3.5 px-4 text-slate-400 text-xs">{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
@@ -365,7 +365,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="py-8 text-center text-slate-500">No sensor log events available in MySQL database.</td>
+                                    <td colspan="5" class="py-8 text-center text-slate-500">{{ __('ui.no_events_available') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

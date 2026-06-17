@@ -1,11 +1,15 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LanguageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+// Language switcher (accessible to all)
+Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SensorLogController;

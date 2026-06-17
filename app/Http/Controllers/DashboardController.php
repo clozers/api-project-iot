@@ -36,7 +36,7 @@ class DashboardController extends Controller
         $historyLogs = $this->sensorRepository->getHistory(20);
         $dailyAverages = $this->sensorRepository->getDailyAveragesForChart(7);
 
-        // Map recent logs for table preview
+        // Map recent logs for table preview (already chronological from repository, take last 10)
         $recentLogs = $historyLogs->reverse()->take(10)->values();
 
         return view('dashboard', compact(
@@ -82,7 +82,7 @@ class DashboardController extends Controller
             'averages' => $dailyAverages->pluck('avg_gas')->toArray(),
         ];
 
-        // Format recent logs list (last 10)
+        // Format recent logs list (last 10, newest first for display)
         $recentLogs = $historyLogs->reverse()->take(10)->values()->map(function($log) {
             return [
                 'id' => $log->id,
