@@ -147,10 +147,18 @@ class SensorLogRepository implements SensorLogRepositoryInterface
     }
 
     /**
-     * Get all sensor logs matching search for CSV export.
+     * Get all sensor logs matching search and filters for CSV export.
      */
-    public function getAllLogsForExport(?string $search = null, string $sortField = 'created_at', string $sortOrder = 'desc'): Collection
-    {
+    public function getAllLogsForExport(
+        ?string $search = null,
+        string $sortField = 'created_at',
+        string $sortOrder = 'desc',
+        ?string $dateFrom = null,
+        ?string $dateTo = null,
+        ?string $status = null,
+        ?int $gasMin = null,
+        ?int $gasMax = null
+    ): Collection {
         // Sanitize sorting
         $allowedSortFields = ['id', 'gas_value', 'flame_detected', 'created_at'];
         if (!in_array($sortField, $allowedSortFields)) {
@@ -160,17 +168,43 @@ class SensorLogRepository implements SensorLogRepositoryInterface
 
         $query = SensorLog::query();
 
+        // Keyword search
         if ($search !== null && $search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('gas_value', 'like', "%{$search}%")
                   ->orWhere('id', 'like', "%{$search}%");
-                
-                if (strtolower($search) === 'fire' || strtolower($search) === 'flame' || strtolower($search) === 'yes' || strtolower($search) === 'true' || $search === '1') {
+
+                if (in_array(strtolower($search), ['fire', 'flame', 'yes', 'true', '1'])) {
                     $q->orWhere('flame_detected', true);
-                } elseif (strtolower($search) === 'safe' || strtolower($search) === 'no' || strtolower($search) === 'false' || $search === '0') {
+                } elseif (in_array(strtolower($search), ['safe', 'no', 'false', '0'])) {
                     $q->orWhere('flame_detected', false);
                 }
             });
+        }
+
+        // Date range filter
+        if ($dateFrom) {
+            $query->whereDate('created_at', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $query->whereDate('created_at', '<=', $dateTo);
+        }
+
+        // Status filter
+        if ($status === 'fire') {
+            $query->where('flame_detected', true);
+        } elseif ($status === 'gas_leak') {
+            $query->where('flame_detected', false)->where('gas_value', '>', 1500);
+        } elseif ($status === 'safe') {
+            $query->where('flame_detected', false)->where('gas_value', '<=', 1500);
+        }
+
+        // Gas value range filter
+        if ($gasMin !== null) {
+            $query->where('gas_value', '>=', $gasMin);
+        }
+        if ($gasMax !== null) {
+            $query->where('gas_value', '<=', $gasMax);
         }
 
         return $query->orderBy($sortField, $sortOrder)->get();

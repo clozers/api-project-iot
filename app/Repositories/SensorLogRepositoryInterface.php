@@ -54,7 +54,16 @@ interface SensorLogRepositoryInterface
     public function getPaginatedLogs(?string $search = null, string $sortField = 'created_at', string $sortOrder = 'desc', int $perPage = 15): LengthAwarePaginator;
 
     /**
-     * Get all sensor logs matching search for CSV export.
+     * Get all sensor logs matching search and filters for CSV export.
      */
-    public function getAllLogsForExport(?string $search = null, string $sortField = 'created_at', string $sortOrder = 'desc'): Collection;
+    public function getAllLogsForExport(
+        ?string $search = null,
+        string $sortField = 'created_at',
+        string $sortOrder = 'desc',
+        ?string $dateFrom = null,
+        ?string $dateTo = null,
+        ?string $status = null,
+        ?int $gasMin = null,
+        ?int $gasMax = null
+    ): Collection;
 }

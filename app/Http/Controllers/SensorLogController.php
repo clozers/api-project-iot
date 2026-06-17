@@ -35,11 +35,18 @@ class SensorLogController extends Controller
      */
     public function export(Request $request): StreamedResponse
     {
-        $search = $request->query('search');
-        $sortBy = $request->query('sort_by', 'created_at');
-        $order  = $request->query('order', 'desc');
+        $search  = $request->query('search');
+        $sortBy  = $request->query('sort_by', 'created_at');
+        $order   = $request->query('order', 'desc');
 
-        $logs = $this->sensorRepository->getAllLogsForExport($search, $sortBy, $order);
+        // Additional export-specific filters
+        $dateFrom = $request->query('date_from') ?: null;
+        $dateTo   = $request->query('date_to') ?: null;
+        $status   = $request->query('status') ?: null;   // 'safe', 'gas_leak', 'fire'
+        $gasMin   = $request->query('gas_min') !== null && $request->query('gas_min') !== '' ? (int) $request->query('gas_min') : null;
+        $gasMax   = $request->query('gas_max') !== null && $request->query('gas_max') !== '' ? (int) $request->query('gas_max') : null;
+
+        $logs = $this->sensorRepository->getAllLogsForExport($search, $sortBy, $order, $dateFrom, $dateTo, $status, $gasMin, $gasMax);
 
         $exportedAt = Carbon::now();
         $filename   = 'smart_safety_logs_' . $exportedAt->format('Ymd_His') . '.csv';
@@ -52,17 +59,29 @@ class SensorLogController extends Controller
             'Expires'             => '0',
         ];
 
-        $callback = function () use ($logs, $exportedAt, $search) {
+        $callback = function () use ($logs, $exportedAt, $search, $dateFrom, $dateTo, $status, $gasMin, $gasMax) {
             $file = fopen('php://output', 'w');
 
             // Add UTF-8 BOM for Excel compatibility
             fputs($file, "\xEF\xBB\xBF");
 
             // ─── Report Header ───────────────────────────────────────────────────────
+            $statusLabel = match($status) {
+                'fire'     => 'Fire Detected Only',
+                'gas_leak' => 'Gas Leak Only',
+                'safe'     => 'Safe Only',
+                default    => '-',
+            };
+
             fputcsv($file, ['SMART SAFETY - IoT Sensor Log Report']);
-            fputcsv($file, ['Generated At', $exportedAt->format('l, d F Y  H:i:s')]);
-            fputcsv($file, ['Total Records', $logs->count()]);
-            fputcsv($file, ['Filter / Search', $search ?: '-']);
+            fputcsv($file, ['Generated At',        $exportedAt->format('l, d F Y  H:i:s')]);
+            fputcsv($file, ['Total Records',        $logs->count()]);
+            fputcsv($file, ['Filter / Search',      $search ?: '-']);
+            fputcsv($file, ['Date From',            $dateFrom ?: '-']);
+            fputcsv($file, ['Date To',              $dateTo ?: '-']);
+            fputcsv($file, ['Status Filter',        $statusLabel]);
+            fputcsv($file, ['Gas Value Min (ppm)',  $gasMin ?? '-']);
+            fputcsv($file, ['Gas Value Max (ppm)',  $gasMax ?? '-']);
             fputcsv($file, ['Gas Safety Threshold', '1500 ppm']);
             fputcsv($file, []); // blank row spacer
 

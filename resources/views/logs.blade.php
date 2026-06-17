@@ -8,12 +8,19 @@
                 <p class="text-xs text-slate-400 mt-1">Search, sort, analyze, and export historical MQ-2 and KY-026 readings</p>
             </div>
             <div>
-                <a href="{{ route('logs.export', ['search' => $search, 'sort_by' => $sortBy, 'order' => $order]) }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-md transition duration-150 ease-in-out border border-emerald-500/30 gap-2">
+                <button
+                    id="export-toggle-btn"
+                    onclick="document.getElementById('export-panel').classList.toggle('hidden')"
+                    class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-md transition duration-150 ease-in-out border border-emerald-500/30 gap-2"
+                >
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
-                    <span>Export Logs to CSV</span>
-                </a>
+                    <span>Export CSV</span>
+                    <svg class="h-3 w-3 ml-1 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
             </div>
         </div>
     </x-slot>
@@ -31,7 +38,86 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Search Filter Bar -->
+            {{-- ═══ Export Filter Panel (hidden by default) ══════════════════════════════ --}}
+            <div id="export-panel" class="hidden glass-card rounded-xl p-5 text-slate-100 border border-emerald-500/20">
+                <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+                    </svg>
+                    Export Filter Options
+                </h3>
+                <form method="GET" action="{{ route('logs.export') }}" class="space-y-4">
+                    {{-- Pass existing table filters --}}
+                    <input type="hidden" name="search"  value="{{ $search }}">
+                    <input type="hidden" name="sort_by" value="{{ $sortBy }}">
+                    <input type="hidden" name="order"   value="{{ $order }}">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                        {{-- Date From --}}
+                        <div>
+                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">Tanggal Mulai</label>
+                            <input type="date" name="date_from" id="date_from"
+                                class="w-full rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 focus:border-emerald-500 focus:ring-0 focus:outline-none transition"
+                                max="{{ date('Y-m-d') }}"
+                            >
+                        </div>
+
+                        {{-- Date To --}}
+                        <div>
+                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">Tanggal Selesai</label>
+                            <input type="date" name="date_to" id="date_to"
+                                class="w-full rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 focus:border-emerald-500 focus:ring-0 focus:outline-none transition"
+                                max="{{ date('Y-m-d') }}"
+                            >
+                        </div>
+
+                        {{-- Status Filter --}}
+                        <div>
+                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">Status Sistem</label>
+                            <select name="status" id="status_filter"
+                                class="w-full rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 focus:border-emerald-500 focus:ring-0 focus:outline-none transition"
+                            >
+                                <option value="">Semua Status</option>
+                                <option value="safe">✅ Safe (Aman)</option>
+                                <option value="gas_leak">⚠️ Gas Leak (Kebocoran Gas)</option>
+                                <option value="fire">🔥 Fire Detected (Api Terdeteksi)</option>
+                            </select>
+                        </div>
+
+                        {{-- Gas Min --}}
+                        <div>
+                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">Gas Minimum (ppm)</label>
+                            <input type="number" name="gas_min" id="gas_min" min="0" max="9999" placeholder="Contoh: 0"
+                                class="w-full rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 focus:border-emerald-500 focus:ring-0 focus:outline-none transition"
+                            >
+                        </div>
+
+                        {{-- Gas Max --}}
+                        <div>
+                            <label class="block text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wide">Gas Maksimum (ppm)</label>
+                            <input type="number" name="gas_max" id="gas_max" min="0" max="9999" placeholder="Contoh: 9999"
+                                class="w-full rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 focus:border-emerald-500 focus:ring-0 focus:outline-none transition"
+                            >
+                        </div>
+
+                        {{-- Submit --}}
+                        <div class="flex items-end">
+                            <button type="submit"
+                                class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-lg border border-emerald-500/30 shadow-md transition"
+                            >
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                                Download CSV
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            {{-- ═══ Search Filter Bar ══════════════════════════════════════════════════════ --}}
             <div class="glass-card rounded-xl p-5 text-slate-100">
                 <form method="GET" action="{{ route('logs.index') }}" class="flex flex-col md:flex-row md:items-center gap-4">
                     <input type="hidden" name="sort_by" value="{{ $sortBy }}">
