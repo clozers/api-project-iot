@@ -39,7 +39,11 @@ class SensorController extends Controller
         }
 
         // Store data using the repository
-        $this->sensorRepository->create($validator->validated());
+        $validated = $validator->validated();
+        $this->sensorRepository->create($validated);
+
+        // Check sensor data and send Telegram notification if status is dangerous or recovered
+        $this->checkAndSendTelegramAlert((int)$validated['gas'], (bool)$validated['flame']);
 
         // Set session start time if device is newly online / cache has expired
         if (!Cache::has('session_start')) {
@@ -183,5 +187,85 @@ class SensorController extends Controller
             'last_seen' => $lastSeen->diffForHumans(),
             'uptime' => '0m (Offline)'
         ];
+    }
+
+    /**
+     * Check sensor thresholds and send a throttled Telegram alert if necessary.
+     */
+    private function checkAndSendTelegramAlert(int $gas, bool $flame): void
+    {
+        $botToken = env('TELEGRAM_BOT_TOKEN');
+        $chatId = env('TELEGRAM_CHAT_ID');
+
+        if (!$botToken || !$chatId) {
+            return;
+        }
+
+        // Determine current system status
+        $currentState = 'SAFE';
+        if ($flame) {
+            $currentState = 'FIRE_DETECTED';
+        } elseif ($gas > 1500) {
+            $currentState = 'GAS_LEAK';
+        }
+
+        // Retrieve last alert state and time from Cache to prevent spamming
+        $lastAlertState = Cache::get('tg_last_alert_state', 'SAFE');
+        $lastAlertTime = Cache::get('tg_last_alert_time');
+
+        $shouldAlert = false;
+
+        if ($currentState !== 'SAFE') {
+            // If status escalated/changed, alert immediately
+            if ($currentState !== $lastAlertState) {
+                $shouldAlert = true;
+            }
+            // Cooldown check (5 minutes) for reminder notifications if state remains critical
+            elseif (!$lastAlertTime || Carbon::parse($lastAlertTime)->diffInMinutes(Carbon::now()) >= 5) {
+                $shouldAlert = true;
+            }
+        } else {
+            // Send recovery notification when moving from a dangerous state to SAFE
+            if ($lastAlertState !== 'SAFE') {
+                $shouldAlert = true;
+            }
+        }
+
+        if ($shouldAlert) {
+            $message = "";
+            if ($currentState === 'FIRE_DETECTED') {
+                $message = "🔥 *CRITICAL WARNING: FIRE DETECTED!* 🔥\n\n"
+                    . "MQ-2 Gas Sensor: `{$gas}` ppm\n"
+                    . "KY-026 Flame Sensor: *FIRE DETECTED!*\n\n"
+                    . "⚠️ _Please inspect the location immediately and take safety precautions!_";
+            } elseif ($currentState === 'GAS_LEAK') {
+                $message = "⚠️ *WARNING: GAS LEAK DETECTED!* ⚠️\n\n"
+                    . "MQ-2 Gas Sensor: `{$gas}` ppm\n"
+                    . "KY-026 Flame Sensor: Normal\n\n"
+                    . "⚠️ _Gas level exceeded the safety threshold (1500 ppm)._";
+            } elseif ($currentState === 'SAFE' && $lastAlertState !== 'SAFE') {
+                $message = "✅ *SYSTEM RECOVERY: SAFE STATUS* ✅\n\n"
+                    . "Sensor levels have returned to normal:\n"
+                    . "MQ-2 Gas Sensor: `{$gas}` ppm\n"
+                    . "KY-026 Flame Sensor: Normal\n\n"
+                    . "🍀 _System is back to a safe operating state._";
+            }
+
+            if ($message !== "") {
+                try {
+                    \Illuminate\Support\Facades\Http::timeout(5)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                        'chat_id' => $chatId,
+                        'text' => $message,
+                        'parse_mode' => 'Markdown',
+                    ]);
+
+                    // Update cache to reflect the sent alert
+                    Cache::put('tg_last_alert_state', $currentState);
+                    Cache::put('tg_last_alert_time', Carbon::now()->toDateTimeString());
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error("Failed to send Telegram notification: " . $e->getMessage());
+                }
+            }
+        }
     }
 }
