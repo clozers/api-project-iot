@@ -31,43 +31,109 @@ class SensorLogController extends Controller
     }
 
     /**
-     * Export the sensor logs to a CSV file.
+     * Export the sensor logs to a well-formatted CSV file.
      */
     public function export(Request $request): StreamedResponse
     {
         $search = $request->query('search');
         $sortBy = $request->query('sort_by', 'created_at');
-        $order = $request->query('order', 'desc');
+        $order  = $request->query('order', 'desc');
 
         $logs = $this->sensorRepository->getAllLogsForExport($search, $sortBy, $order);
 
-        $filename = 'smart_safety_sensor_logs_' . Carbon::now()->format('Ymd_His') . '.csv';
+        $exportedAt = Carbon::now();
+        $filename   = 'smart_safety_logs_' . $exportedAt->format('Ymd_His') . '.csv';
 
         $headers = [
-            'Content-Type' => 'text/csv',
+            'Content-Type'        => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0',
         ];
 
-        $callback = function() use ($logs) {
+        $callback = function () use ($logs, $exportedAt, $search) {
             $file = fopen('php://output', 'w');
-            
+
             // Add UTF-8 BOM for Excel compatibility
             fputs($file, "\xEF\xBB\xBF");
-            
-            // CSV headers
-            fputcsv($file, ['ID', 'Gas Value (ppm)', 'Flame Status', 'Timestamp']);
 
+            // ─── Report Header ───────────────────────────────────────────────────────
+            fputcsv($file, ['SMART SAFETY - IoT Sensor Log Report']);
+            fputcsv($file, ['Generated At', $exportedAt->format('l, d F Y  H:i:s')]);
+            fputcsv($file, ['Total Records', $logs->count()]);
+            fputcsv($file, ['Filter / Search', $search ?: '-']);
+            fputcsv($file, ['Gas Safety Threshold', '1500 ppm']);
+            fputcsv($file, []); // blank row spacer
+
+            // ─── Quick Statistics ─────────────────────────────────────────────────────
+            $fireCount    = $logs->where('flame_detected', true)->count();
+            $gasLeakCount = $logs->where('flame_detected', false)->filter(fn($l) => $l->gas_value > 1500)->count();
+            $safeCount    = $logs->filter(fn($l) => !$l->flame_detected && $l->gas_value <= 1500)->count();
+            $avgGas       = $logs->count() ? round($logs->avg('gas_value'), 2) : 0;
+            $maxGas       = $logs->count() ? $logs->max('gas_value') : 0;
+            $minGas       = $logs->count() ? $logs->min('gas_value') : 0;
+
+            fputcsv($file, ['=== SUMMARY ===']);
+            fputcsv($file, ['Total Safe Events',      $safeCount]);
+            fputcsv($file, ['Total Gas Leak Events',  $gasLeakCount]);
+            fputcsv($file, ['Total Fire Detected Events', $fireCount]);
+            fputcsv($file, ['Average Gas Value (ppm)', $avgGas]);
+            fputcsv($file, ['Maximum Gas Value (ppm)', $maxGas]);
+            fputcsv($file, ['Minimum Gas Value (ppm)', $minGas]);
+            fputcsv($file, []); // blank row spacer
+
+            // ─── Column Headers ───────────────────────────────────────────────────────
+            fputcsv($file, [
+                'No.',
+                'Record ID',
+                'Gas Value (ppm)',
+                'Gas Level',
+                'Flame Sensor',
+                'System Status',
+                'Date',
+                'Time',
+                'Day of Week',
+                'Timestamp (Full)',
+            ]);
+
+            // ─── Data Rows ────────────────────────────────────────────────────────────
+            $rowNumber = 1;
             foreach ($logs as $log) {
+                $gasValue      = (int) $log->gas_value;
+                $flameDetected = (bool) $log->flame_detected;
+                $timestamp     = Carbon::parse($log->created_at);
+
+                // Derive gas level label
+                if ($gasValue <= 400)       $gasLevel = 'Very Low';
+                elseif ($gasValue <= 800)   $gasLevel = 'Low';
+                elseif ($gasValue <= 1200)  $gasLevel = 'Moderate';
+                elseif ($gasValue <= 1500)  $gasLevel = 'High';
+                else                         $gasLevel = 'CRITICAL - Exceeds Threshold';
+
+                // Derive system status
+                if ($flameDetected)          $status = 'FIRE DETECTED';
+                elseif ($gasValue > 1500)    $status = 'GAS LEAK';
+                else                         $status = 'SAFE';
+
                 fputcsv($file, [
+                    $rowNumber++,
                     $log->id,
-                    $log->gas_value,
-                    $log->flame_detected ? 'FIRE DETECTED' : 'SAFE',
-                    Carbon::parse($log->created_at)->format('Y-m-d H:i:s'),
+                    $gasValue,
+                    $gasLevel,
+                    $flameDetected ? 'FIRE DETECTED' : 'Normal',
+                    $status,
+                    $timestamp->format('Y-m-d'),
+                    $timestamp->format('H:i:s'),
+                    $timestamp->format('l'),       // e.g. Monday
+                    $timestamp->format('Y-m-d H:i:s'),
                 ]);
             }
+
+            // ─── Footer ───────────────────────────────────────────────────────────────
+            fputcsv($file, []);
+            fputcsv($file, ['--- End of Report ---']);
+            fputcsv($file, ['Smart Safety IoT Monitoring System']);
 
             fclose($file);
         };
